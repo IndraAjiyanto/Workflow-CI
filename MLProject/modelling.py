@@ -59,7 +59,8 @@ def save_feature_importance(model, feature_names, filename='feature_importance.p
     return filename
 
 def main():
-    X_train, X_test, y_train, y_test = load_data('diabetes_preprocessing.csv')
+    data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'diabetes_preprocessing.csv')
+    X_train, X_test, y_train, y_test = load_data(data_path)
     print(f"Train: {X_train.shape}, Test: {X_test.shape}")
 
     params = {
@@ -70,7 +71,11 @@ def main():
         'random_state': 42
     }
 
-    with mlflow.start_run(run_name="RandomForest_Baseline"):
+    active_run = mlflow.active_run()
+    if active_run is None:
+        active_run = mlflow.start_run(run_name="RandomForest_Baseline")
+
+    with active_run:
 
         model = RandomForestClassifier(**params)
         model.fit(X_train, y_train)
