@@ -1,0 +1,16 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY . .
+
+RUN pip install --no-cache-dir \
+    mlflow==2.11.1 \
+    dagshub==0.3.25 \
+    scikit-learn==1.4.0 \
+    pandas==2.2.0 \
+    numpy==1.26.4 \
+    matplotlib==3.8.2 \
+    seaborn==0.13.2
+
+CMD ["python", "modelling.py"]
