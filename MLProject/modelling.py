@@ -71,11 +71,7 @@ def main():
         'random_state': 42
     }
 
-    active_run = mlflow.active_run()
-    if active_run is None:
-        active_run = mlflow.start_run(run_name="RandomForest_Baseline")
-
-    with active_run:
+    with mlflow.start_run(run_name="RandomForest_CI") as run:
 
         model = RandomForestClassifier(**params)
         model.fit(X_train, y_train)

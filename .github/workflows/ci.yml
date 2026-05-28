@@ -24,12 +24,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install mlflow dagshub scikit-learn pandas numpy matplotlib seaborn
 
-      - name: Run MLflow Project
+      - name: Run Training
         env:
           DAGSHUB_USER_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
         run: |
           cd MLProject
-          mlflow run . --env-manager=local
+          python modelling.py
 
       - name: Save artifacts to GitHub
         run: |
