@@ -50,10 +50,5 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          cd MLProject
-          mlflow models build-docker \
-            -m "runs:/$(cat last_run_id.txt)/random_forest_model" \
-            -n "indraajiyanto/diabetes-mlproject" \
-            --enable-mlserver || \
-          docker build -t indraajiyanto/diabetes-mlproject:latest .
+          docker build -t indraajiyanto/diabetes-mlproject:latest ./MLProject
           docker push indraajiyanto/diabetes-mlproject:latest
