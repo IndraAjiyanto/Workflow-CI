@@ -6,21 +6,24 @@ import mlflow
 import mlflow.sklearn
 import dagshub
 import os
+import pickle
+import warnings
+warnings.filterwarnings('ignore')
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score,
     f1_score, confusion_matrix, classification_report
 )
-import pickle
-import warnings
-warnings.filterwarnings('ignore')
 
 dagshub.init(
     repo_owner='IndraAjiyanto',
     repo_name='Eksperimen_SML_Indra-Ajiyanto',
     mlflow=True
 )
+
+mlflow.set_experiment("diabetes-mlproject")
 
 def load_data(filepath):
     df = pd.read_csv(filepath)
@@ -40,7 +43,6 @@ def save_confusion_matrix(y_test, y_pred, filename='confusion_matrix.png'):
     plt.tight_layout()
     plt.savefig(filename, dpi=100)
     plt.close()
-    print(f"Confusion matrix disimpan: {filename}")
     return filename
 
 def save_feature_importance(model, feature_names, filename='feature_importance.png'):
@@ -55,7 +57,6 @@ def save_feature_importance(model, feature_names, filename='feature_importance.p
     plt.tight_layout()
     plt.savefig(filename, dpi=100)
     plt.close()
-    print(f"Feature importance disimpan: {filename}")
     return filename
 
 def main():
@@ -72,7 +73,6 @@ def main():
     }
 
     with mlflow.start_run(run_name="RandomForest_CI") as run:
-
         model = RandomForestClassifier(**params)
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
@@ -90,7 +90,6 @@ def main():
         print(f"{'='*40}\n")
 
         mlflow.log_params(params)
-
         mlflow.log_metric("accuracy", accuracy)
         mlflow.log_metric("precision", precision)
         mlflow.log_metric("recall", recall)
@@ -110,12 +109,12 @@ def main():
         fi_path = save_feature_importance(model, list(X_train.columns))
         mlflow.log_artifact(fi_path)
 
-        with open("model.pkl", "wb") as f:
+        with open("best_model.pkl", "wb") as f:
             pickle.dump(model, f)
-        mlflow.log_artifact("model.pkl")
+        mlflow.log_artifact("best_model.pkl")
 
-        print("Semua log berhasil dikirim ke DagsHub!")
-        print(f"Run ID: {mlflow.active_run().info.run_id}")
+        print(f"Logging ke DagsHub berhasil!")
+        print(f"Run ID: {run.info.run_id}")
 
 if __name__ == "__main__":
     main()
