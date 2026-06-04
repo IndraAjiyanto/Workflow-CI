@@ -24,18 +24,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install mlflow dagshub scikit-learn pandas numpy matplotlib seaborn
 
-      - name: Run Training
+      - name: Run MLflow Project
         env:
           DAGSHUB_USER_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
         run: |
           cd MLProject
-          python modelling.py
+          mlflow run . --env-manager=local 2>&1 | tee mlflow_run.log
+          echo "MLflow run selesai"
 
       - name: Save artifacts to GitHub
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add -f MLProject/*.png MLProject/*.txt MLProject/*.pkl 2>/dev/null || true
+          git add -f MLProject/*.png MLProject/*.txt MLProject/*.pkl MLProject/last_run_id.txt 2>/dev/null || true
           git diff --staged --quiet || git commit -m "chore: update model artifacts [skip ci]"
           git push
 
