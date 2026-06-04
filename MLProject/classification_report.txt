@@ -1,0 +1,8 @@
+                precision    recall  f1-score   support
+
+Tidak Diabetes       0.91      0.87      0.89        99
+      Diabetes       0.78      0.85      0.82        55
+
+      accuracy                           0.86       154
+     macro avg       0.85      0.86      0.85       154
+  weighted avg       0.87      0.86      0.86       154
